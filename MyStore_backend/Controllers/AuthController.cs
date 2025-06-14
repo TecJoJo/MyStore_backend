@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MyStore_backend.Models.DTO;
+using MyStore_backend.Repository;
 
 namespace MyStore_backend.Controllers
 {
@@ -10,11 +11,12 @@ namespace MyStore_backend.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly ITokenRepository _tokenRepository;
 
-
-        public AuthController(UserManager<IdentityUser> userManager)
+        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
         {
             this._userManager = userManager;
+            this._tokenRepository = tokenRepository;
         }
 
 
@@ -50,8 +52,8 @@ namespace MyStore_backend.Controllers
                 if (loginResult)
                 {
                     //issure JWT token
-
-                    return Ok(new {Message="Login succeeded"});
+                    var jwtToken = _tokenRepository.createJwtToken(user);
+                    return Ok(new {Message="Login succeeded", JwtToken = jwtToken});
                 }
             }
             
