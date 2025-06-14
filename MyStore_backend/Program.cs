@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyStore_backend.Data;
 
@@ -12,6 +13,23 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MyStoreAuthDBContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("MyStoreAuthConnectionString")));
+
+builder.Services.AddIdentityCore<IdentityUser>()
+    .AddRoles<IdentityRole>()
+    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("MyStore")
+    .AddEntityFrameworkStores<MyStoreAuthDBContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 10;
+    options.Password.RequiredUniqueChars = 0;
+});
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
 {
     ValidateIssuer = true,
