@@ -53,10 +53,19 @@ namespace MyStore_backend.Controllers
                 {
                     //issure JWT token
                     var jwtToken = _tokenRepository.createJwtToken(user);
-                    return Ok(new {Message="Login succeeded", JwtToken = jwtToken});
+                    var resposne = new LoginResponseDTO
+                    {
+                        Message = "Login succeeded",
+                        JwtToken = jwtToken,
+                        Username = user.UserName
+
+                    };
+                    return Ok(resposne);
                 }
             }
             
+            
+
             return BadRequest(new { Message = "Wrong password or username" });
         }
     }
