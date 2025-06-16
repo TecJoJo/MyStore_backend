@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyStore_backend.Data;
 
@@ -10,9 +11,11 @@ using MyStore_backend.Data;
 namespace MyStore_backend.Migrations
 {
     [DbContext(typeof(MyStoreAuthDBContext))]
-    partial class MyStoreAuthDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250616183309_initialMigrationOnAuthDBContext")]
+    partial class initialMigrationOnAuthDBContext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.17");
