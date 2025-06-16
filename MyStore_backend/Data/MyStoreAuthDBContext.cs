@@ -23,6 +23,37 @@ namespace MyStore_backend.Data
             };
 
             modelBuilder.Entity<IdentityRole>().HasData(roles);
+            // Seeded user: dummyuser@example.com
+            // Password: Password123!
+            var user1Id = "11111111-1111-1111-1111-111111111111";
+            var user1 = new IdentityUser
+            {
+                Id = user1Id,
+                UserName = "dummyuser@example.com",
+                NormalizedUserName = "DUMMYUSER@EXAMPLE.COM",
+                Email = "dummyuser@example.com",
+                NormalizedEmail = "DUMMYUSER@EXAMPLE.COM",
+                EmailConfirmed = true,
+                PasswordHash = "AQAAAAIAAYagAAAAEJv8QwQw1QwQw1QwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQw==",
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+
+            // Seeded user: anotheruser@example.com
+            // Password: Test@12345!
+            var user2Id = "22222222-2222-2222-2222-222222222222";
+            var user2 = new IdentityUser
+            {
+                Id = user2Id,
+                UserName = "anotheruser@example.com",
+                NormalizedUserName = "ANOTHERUSER@EXAMPLE.COM",
+                Email = "anotheruser@example.com",
+                NormalizedEmail = "ANOTHERUSER@EXAMPLE.COM",
+                EmailConfirmed = true,
+                PasswordHash = "AQAAAAIAAYagAAAAEJQw1QwQw1QwQw1QwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQw==",
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+
+            modelBuilder.Entity<IdentityUser>().HasData(user1, user2);
         }
     }
 }

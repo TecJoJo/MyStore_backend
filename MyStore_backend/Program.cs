@@ -14,7 +14,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MyStoreAuthDBContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("MyStoreAuthConnectionString")));
-
+builder.Services.AddDbContext<MyStoreProductsDBContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("MyStoreProductsConnectionString")));
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 
 builder.Services.AddIdentityCore<IdentityUser>()
