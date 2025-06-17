@@ -2,7 +2,7 @@
 
 namespace MyStore_backend.Models.Domain
 {
-    public class Cart
+    public class CartItem
     {
         [Key]
         public Guid Id { get; set; }

@@ -10,15 +10,15 @@ namespace MyStore_backend.Data
         }
 
         public DbSet<Product> Products { get; set; }
-        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Cart>()
+            modelBuilder.Entity<CartItem>()
                 .HasOne(cart => cart.Product)
-                .WithMany(product => product.Carts)
+                .WithMany(product => product.CartItems)
                 .HasForeignKey(cart => cart.ProductId);
 
 
@@ -78,38 +78,38 @@ namespace MyStore_backend.Data
             modelBuilder.Entity<Product>().HasData(products);
 
             // Seed carts: each user has 5 items (one for each product)
-            var carts = new List<Cart>()
+            var carts = new List<CartItem>()
             {
                 // Cart for dummyuser@example.com (UserId: 11111111-1111-1111-1111-111111111111)
-                new Cart
+                new CartItem
                 {
                     Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1"),
                     UserId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                     ProductId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
                     Quantity = 2
                 },
-                new Cart
+                new CartItem
                 {
                     Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2"),
                     UserId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                     ProductId = Guid.Parse("00000000-0000-0000-0000-000000000002"),
                     Quantity = 1
                 },
-                new Cart
+                new CartItem
                 {
                     Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3"),
                     UserId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                     ProductId = Guid.Parse("00000000-0000-0000-0000-000000000003"),
                     Quantity = 1
                 },
-                new Cart
+                new CartItem
                 {
                     Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4"),
                     UserId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                     ProductId = Guid.Parse("00000000-0000-0000-0000-000000000004"),
                     Quantity = 3
                 },
-                new Cart
+                new CartItem
                 {
                     Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5"),
                     UserId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
@@ -118,35 +118,35 @@ namespace MyStore_backend.Data
                 },
 
                 // Cart for anotheruser@example.com (UserId: 22222222-2222-2222-2222-222222222222)
-                new Cart
+                new CartItem
                 {
                     Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1"),
                     UserId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
                     ProductId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
                     Quantity = 1
                 },
-                new Cart
+                new CartItem
                 {
                     Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2"),
                     UserId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
                     ProductId = Guid.Parse("00000000-0000-0000-0000-000000000002"),
                     Quantity = 2
                 },
-                new Cart
+                new CartItem
                 {
                     Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb3"),
                     UserId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
                     ProductId = Guid.Parse("00000000-0000-0000-0000-000000000003"),
                     Quantity = 2
                 },
-                new Cart
+                new CartItem
                 {
                     Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb4"),
                     UserId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
                     ProductId = Guid.Parse("00000000-0000-0000-0000-000000000004"),
                     Quantity = 1
                 },
-                new Cart
+                new CartItem
                 {
                     Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb5"),
                     UserId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
@@ -154,7 +154,7 @@ namespace MyStore_backend.Data
                     Quantity = 3
                 }
             };
-            modelBuilder.Entity<Cart>().HasData(carts);
+            modelBuilder.Entity<CartItem>().HasData(carts);
         }
 
 

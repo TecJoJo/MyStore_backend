@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace MyStore_backend.Models.Domain
+﻿namespace MyStore_backend.Models.DTO
 {
-    public class Product
+    public class GetProductsResponseDTO
     {
-        [Key]
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -12,8 +9,5 @@ namespace MyStore_backend.Models.Domain
         public string ImageUrl { get; set; }
         public string Category { get; set; }
         public int Stock { get; set; }
-
-        //navigaion
-        public ICollection<CartItem> CartItems { get; set; }
     }
 }
