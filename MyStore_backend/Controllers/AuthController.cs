@@ -23,21 +23,48 @@ namespace MyStore_backend.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register([FromBody]  RegisterRequestDTO registerRequestDTO)
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDTO registerRequestDTO)
         {
             var user = new IdentityUser
             {
                 UserName = registerRequestDTO.Email,
                 Email = registerRequestDTO.Email
             };
-            var userRegistrationResult = await _userManager.CreateAsync(user,registerRequestDTO.Password);
 
-            if (userRegistrationResult.Succeeded)
+            try
             {
-                return Ok(new { Message = "User registered successfully" });
+                var result = await _userManager.CreateAsync(user, registerRequestDTO.Password);
+
+                if (result.Succeeded)
+                {
+                    var response = new ApiResponseDto<RegisterResponseDto>
+                    {
+                        Success = true,
+                        Message = "User registered successfully",
+                        Data = new RegisterResponseDto { Email = user.Email }
+                    };
+                    return Ok(response);
+                }
+
+                // Return identity errors
+                var errors = result.Errors.Select(e => e.Description);
+
+                return BadRequest(new ApiResponseDto<object>
+                {
+                    Success = false,
+                    Message = "User registration failed",
+                    Errors = errors
+                });
             }
-            return BadRequest(new { Message = "Something is wrong" });
-            
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseDto<object>
+                {
+                    Success = false,
+                    Message = "An unexpected error occurred",
+                    Errors = new[] { ex.Message }
+                });
+            }
         }
 
         [HttpPost]
