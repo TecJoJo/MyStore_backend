@@ -23,7 +23,7 @@ namespace MyStore_backend.Controllers
         {
             var products = _myStoreProductsDBContext.Products.ToList();
 
-            var productsDto = products.Select(product => new ProductDto()
+            var productsResponse = products.Select(product => new ProductDto()
             {
                 Category = product.Category,
                 Description = product.Description,
@@ -34,9 +34,9 @@ namespace MyStore_backend.Controllers
                 Stock = product.Stock
             }).ToList();
 
-            var apiResponse = new ApiResponseDto<GetProductsResponseDto>()
+            var apiResponse = new ApiResponseDto<List<ProductDto>>()
             {
-                Data = new GetProductsResponseDto { Products = productsDto },
+                Data = productsResponse,
                 Message = "Products retrieved successfully",
                 Success = true
             };
