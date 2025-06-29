@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MyStore_backend.Data;
-using MyStore_backend.Models.DTO;
+using MyStore_backend.Models.Dto;
 
 namespace MyStore_backend.Controllers
 {
@@ -12,8 +11,8 @@ namespace MyStore_backend.Controllers
         protected readonly MyStoreProductsDBContext _myStoreProductsDBContext;
         protected readonly MyStoreAuthDBContext _myStoreAuthDB;
 
-        public ProductsController(MyStoreProductsDBContext myStoreProductsDBContext, MyStoreAuthDBContext myStoreAuthDBContext) { 
-            
+        public ProductsController(MyStoreProductsDBContext myStoreProductsDBContext, MyStoreAuthDBContext myStoreAuthDBContext)
+        {
             _myStoreProductsDBContext = myStoreProductsDBContext;
             _myStoreAuthDB = myStoreAuthDBContext;
         }
@@ -23,7 +22,8 @@ namespace MyStore_backend.Controllers
         public IActionResult GetProducts()
         {
             var products = _myStoreProductsDBContext.Products.ToList();
-            var productsDto = products.Select(product => new GetProductsResponseDTO()
+
+            var productsDto = products.Select(product => new ProductDto()
             {
                 Category = product.Category,
                 Description = product.Description,
@@ -32,17 +32,14 @@ namespace MyStore_backend.Controllers
                 Name = product.Name,
                 Price = product.Price,
                 Stock = product.Stock
-                
             }).ToList();
 
-            var apiResponse = new ApiResponseDto<List<GetProductsResponseDTO>>()
+            var apiResponse = new ApiResponseDto<GetProductsResponseDto>()
             {
-                Data = productsDto,
+                Data = new GetProductsResponseDto { Products = productsDto },
                 Message = "Products retrieved successfully",
                 Success = true
             };
-
-
 
             return Ok(apiResponse);
         }

@@ -10,14 +10,15 @@ namespace MyStore_backend.Repository
 
         private readonly IConfiguration _configuration;
 
-        public TokenRepository(IConfiguration configuration) {
+        public TokenRepository(IConfiguration configuration)
+        {
             this._configuration = configuration;
         }
         public string createJwtToken(IdentityUser user)
         {
             var claims = new List<Claim>();
             claims.Add(new Claim(ClaimTypes.Email, user.Email));
-         
+
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(

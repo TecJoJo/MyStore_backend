@@ -1,6 +1,6 @@
-﻿namespace MyStore_backend.Models.DTO
+﻿namespace MyStore_backend.Models.Dto
 {
-    public class LoginResponseDTO
+    public class LoginResponseDto
     {
         public string Message { get; set; }
         public string JwtToken { get; set; }

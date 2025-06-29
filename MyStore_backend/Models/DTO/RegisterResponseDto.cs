@@ -1,7 +1,7 @@
-﻿namespace MyStore_backend.Models.DTO
+﻿namespace MyStore_backend.Models.Dto
 {
     public class RegisterResponseDto
     {
-       public string Email { get; set; }
+        public string Email { get; set; }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyStore_backend.Models.DTO
+namespace MyStore_backend.Models.Dto
 {
-    public class RegisterRequestDTO
+    public class RegisterRequestDto
     {
         [Required]
         [DataType(DataType.EmailAddress)]

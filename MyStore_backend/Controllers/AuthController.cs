@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using MyStore_backend.Models.DTO;
+using MyStore_backend.Models.Dto;
 using MyStore_backend.Repository;
 
 namespace MyStore_backend.Controllers
@@ -23,7 +22,7 @@ namespace MyStore_backend.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequestDTO registerRequestDTO)
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerRequestDTO)
         {
             var user = new IdentityUser
             {
@@ -69,18 +68,19 @@ namespace MyStore_backend.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequestDTO loginRequestDTO)
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDTO)
         {
             IdentityUser user = await _userManager.FindByEmailAsync(loginRequestDTO.Email);
 
-            if (user != null) { 
+            if (user != null)
+            {
 
-            var loginResult = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
+                var loginResult = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
                 if (loginResult)
                 {
                     //issure JWT token
                     var jwtToken = _tokenRepository.createJwtToken(user);
-                    var resposne = new LoginResponseDTO
+                    var resposne = new LoginResponseDto
                     {
                         Message = "Login succeeded",
                         JwtToken = jwtToken,
@@ -90,8 +90,8 @@ namespace MyStore_backend.Controllers
                     return Ok(resposne);
                 }
             }
-            
-            
+
+
 
             return BadRequest(new { Message = "Wrong password or username" });
         }
