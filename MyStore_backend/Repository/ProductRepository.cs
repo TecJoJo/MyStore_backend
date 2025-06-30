@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyStore_backend.Data;
+using MyStore_backend.Models.Domain;
 using MyStore_backend.Models.Dto;
 
 namespace MyStore_backend.Repository
@@ -15,11 +16,13 @@ namespace MyStore_backend.Repository
             _myStoreProductsDBContext = myStoreProductsDBContext;
         }
 
-        public async Task<List<ProductDto>> GetAllProductsAsync()
+
+
+        public async Task<List<ProductResponseDto>> GetAllProductsAsync()
         {
             var products = await _myStoreProductsDBContext.Products.ToListAsync();
 
-            var productsResponse = products.Select(product => new ProductDto()
+            var productsResponse = products.Select(product => new ProductResponseDto()
             {
                 Category = product.Category,
                 Description = product.Description,
@@ -31,6 +34,37 @@ namespace MyStore_backend.Repository
             }).ToList();
 
             return productsResponse;
+        }
+
+        public async Task<Guid> CreateProduct(CreateProductRequestDto createProductRequestDto)
+        {
+            var newProduct = new Product()
+            {
+                Category = createProductRequestDto.Category,
+                Description = createProductRequestDto.Description,
+                ImageUrl = createProductRequestDto.ImageUrl,
+                Name = createProductRequestDto.Name,
+                Price = createProductRequestDto.Price,
+                Stock = createProductRequestDto.Stock ?? 0
+            };
+
+            await _myStoreProductsDBContext.AddAsync(newProduct);
+            await _myStoreProductsDBContext.SaveChangesAsync();
+
+            return newProduct.Id;
+        }
+
+        public async Task<bool> DeleteProduct(Guid productId)
+        {
+            var productToRemove = await _myStoreProductsDBContext.Products.FirstOrDefaultAsync((p) => p.Id == productId);
+            if (productToRemove != null)
+            {
+                _myStoreProductsDBContext.Remove(productToRemove);
+                await _myStoreProductsDBContext.SaveChangesAsync();
+                return true;
+            }
+            return false;
+
         }
     }
 }

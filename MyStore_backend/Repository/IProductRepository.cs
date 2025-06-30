@@ -4,6 +4,10 @@ namespace MyStore_backend.Repository
 {
     public interface IProductRepository
     {
-        public Task<List<ProductDto>> GetAllProductsAsync();
+        public Task<List<ProductResponseDto>> GetAllProductsAsync();
+
+        public Task<Guid> CreateProduct(CreateProductRequestDto createProductRequestDto);
+
+        public Task<bool> DeleteProduct(Guid productId);
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace MyStore_backend.Models.Dto
 {
-    public class ProductDto
+    public class ProductResponseDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
