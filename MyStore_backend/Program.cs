@@ -16,7 +16,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<MyStoreAuthDBContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("MyStoreAuthConnectionString")));
 builder.Services.AddDbContext<MyStoreProductsDBContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("MyStoreProductsConnectionString")));
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
-
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddIdentityCore<IdentityUser>()
     .AddRoles<IdentityRole>()
     .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("MyStore")

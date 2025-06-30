@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyStore_backend.Data;
 using MyStore_backend.Models.Dto;
+using MyStore_backend.Repository;
 
 namespace MyStore_backend.Controllers
 {
@@ -10,33 +11,28 @@ namespace MyStore_backend.Controllers
     {
         protected readonly MyStoreProductsDBContext _myStoreProductsDBContext;
         protected readonly MyStoreAuthDBContext _myStoreAuthDB;
+        protected readonly IProductRepository _productRepository;
 
-        public ProductsController(MyStoreProductsDBContext myStoreProductsDBContext, MyStoreAuthDBContext myStoreAuthDBContext)
+        public ProductsController(
+            MyStoreProductsDBContext myStoreProductsDBContext,
+            MyStoreAuthDBContext myStoreAuthDBContext,
+            IProductRepository productRepository
+        )
         {
             _myStoreProductsDBContext = myStoreProductsDBContext;
             _myStoreAuthDB = myStoreAuthDBContext;
+            _productRepository = productRepository;
         }
 
         [HttpGet]
         [Route("allProducts")]
-        public IActionResult GetProducts()
+        public async Task<IActionResult> GetProducts()
         {
-            var products = _myStoreProductsDBContext.Products.ToList();
-
-            var productsResponse = products.Select(product => new ProductDto()
-            {
-                Category = product.Category,
-                Description = product.Description,
-                Id = product.Id,
-                ImageUrl = product.ImageUrl,
-                Name = product.Name,
-                Price = product.Price,
-                Stock = product.Stock
-            }).ToList();
+            var products = await _productRepository.GetAllProductsAsync();
 
             var apiResponse = new ApiResponseDto<List<ProductDto>>()
             {
-                Data = productsResponse,
+                Data = products,
                 Message = "Products retrieved successfully",
                 Success = true
             };
