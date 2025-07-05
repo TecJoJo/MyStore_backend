@@ -2,7 +2,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyStore_backend.Data;
-using MyStore_backend.Repository;
+using MyStore_backend.Repository.Auth;
+using MyStore_backend.Repository.Products;
 
 var builder = WebApplication.CreateBuilder(args);
 

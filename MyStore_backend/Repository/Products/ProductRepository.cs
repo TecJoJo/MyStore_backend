@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyStore_backend.Data;
 using MyStore_backend.Models.Domain;
-using MyStore_backend.Models.Dto;
+using MyStore_backend.Models.Dto.Products;
 
-namespace MyStore_backend.Repository
+namespace MyStore_backend.Repository.Products
 {
     public class ProductRepository : IProductRepository
     {
@@ -65,6 +65,25 @@ namespace MyStore_backend.Repository
             }
             return false;
 
+        }
+
+        public async Task<bool> UpdateProduct(Guid productId, EditProductRequestDto editProductRequestDto)
+        {
+            var product = await _myStoreProductsDBContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
+            if (product != null)
+            {
+
+
+                product.Price = editProductRequestDto.Price;
+                product.Category = editProductRequestDto.Category;
+                product.Name = editProductRequestDto.Name;
+                product.ImageUrl = editProductRequestDto.ImageUrl;
+                product.Description = editProductRequestDto.Description;
+
+                await _myStoreProductsDBContext.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
     }
 }

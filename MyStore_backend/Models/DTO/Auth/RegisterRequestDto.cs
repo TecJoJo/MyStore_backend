@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyStore_backend.Models.Dto
+namespace MyStore_backend.Models.Dto.Auth
 {
     public class RegisterRequestDto
     {

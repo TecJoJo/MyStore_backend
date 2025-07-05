@@ -1,6 +1,6 @@
-﻿using MyStore_backend.Models.Dto;
+﻿using MyStore_backend.Models.Dto.Products;
 
-namespace MyStore_backend.Repository
+namespace MyStore_backend.Repository.Products
 {
     public interface IProductRepository
     {
@@ -9,5 +9,7 @@ namespace MyStore_backend.Repository
         public Task<Guid> CreateProduct(CreateProductRequestDto createProductRequestDto);
 
         public Task<bool> DeleteProduct(Guid productId);
+
+        public Task<bool> UpdateProduct(Guid productId, EditProductRequestDto editProductRequestDto);
     }
 }

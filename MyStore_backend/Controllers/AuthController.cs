@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MyStore_backend.Models.Dto;
-using MyStore_backend.Repository;
+using MyStore_backend.Models.Dto.Auth;
+using MyStore_backend.Repository.Auth;
 
 namespace MyStore_backend.Controllers
 {

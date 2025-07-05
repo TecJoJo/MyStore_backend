@@ -1,4 +1,4 @@
-﻿namespace MyStore_backend.Models.Dto
+﻿namespace MyStore_backend.Models.Dto.Auth
 {
     public class LoginResponseDto
     {

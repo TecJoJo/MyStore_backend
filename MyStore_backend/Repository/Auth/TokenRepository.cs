@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace MyStore_backend.Repository
+namespace MyStore_backend.Repository.Auth
 {
     public class TokenRepository : ITokenRepository
     {
@@ -12,7 +12,7 @@ namespace MyStore_backend.Repository
 
         public TokenRepository(IConfiguration configuration)
         {
-            this._configuration = configuration;
+            _configuration = configuration;
         }
         public string createJwtToken(IdentityUser user)
         {

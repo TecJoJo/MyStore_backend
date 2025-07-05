@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MyStore_backend.Data;
 using MyStore_backend.Models.Dto;
-using MyStore_backend.Repository;
+using MyStore_backend.Models.Dto.Products;
+using MyStore_backend.Repository.Products;
 
 namespace MyStore_backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductsController : ControllerBase
     {
         protected readonly MyStoreProductsDBContext _myStoreProductsDBContext;
@@ -82,7 +85,6 @@ namespace MyStore_backend.Controllers
                 {
                     var successResponse = new ApiResponseDto<bool>
                     {
-                        Data = true,
                         Message = "Product deleted successfully",
                         Success = true
                     };
@@ -92,7 +94,6 @@ namespace MyStore_backend.Controllers
                 {
                     var notFoundResponse = new ApiResponseDto<bool>
                     {
-                        Data = false,
                         Message = "Product not found",
                         Success = false
                     };
@@ -103,7 +104,6 @@ namespace MyStore_backend.Controllers
             {
                 var errorResponse = new ApiResponseDto<bool>
                 {
-                    Data = false,
                     Success = false,
                     Errors = new List<string> { ex.Message },
 
@@ -112,6 +112,44 @@ namespace MyStore_backend.Controllers
             }
         }
 
+        [HttpPut("{productId}")]
+        public async Task<ActionResult> UpdateProduct([FromRoute] Guid productId, [FromBody] EditProductRequestDto editProductRequestDto)
+        {
+            try
+            {
 
+                var result = await _productRepository.UpdateProduct(productId, editProductRequestDto);
+                if (result)
+                {
+                    var successResponse = new ApiResponseDto<bool>
+                    {
+                        Message = "Product updated successfully",
+                        Success = true
+                    };
+                    return Ok(successResponse);
+                }
+                else
+                {
+                    var notFoundResponse = new ApiResponseDto<bool>
+                    {
+                        Message = "Product not found",
+                        Success = false
+                    };
+                    return NotFound(notFoundResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new ApiResponseDto<bool>
+                {
+                    Success = false,
+                    Errors = new List<string> { ex.Message },
+                };
+                return BadRequest(errorResponse);
+            }
+
+
+
+        }
     }
 }
