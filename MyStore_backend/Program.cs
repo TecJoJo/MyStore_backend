@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using MyStore_backend.Data;
+using MyStore_backend.Models.Mappings;
 using MyStore_backend.Repository.Auth;
 using MyStore_backend.Repository.Products;
 
@@ -48,6 +49,7 @@ builder.Services.AddDbContext<MyStoreAuthDBContext>(options => options.UseSqlite
 builder.Services.AddDbContext<MyStoreProductsDBContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("MyStoreProductsConnectionString")));
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddAutoMapper(cfg => cfg.AddProfile<ProductsProfile>());
 builder.Services.AddIdentityCore<IdentityUser>()
     .AddRoles<IdentityRole>()
     .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("MyStore")

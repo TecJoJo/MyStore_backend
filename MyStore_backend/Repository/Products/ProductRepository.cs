@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using MyStore_backend.Data;
 using MyStore_backend.Models.Domain;
 using MyStore_backend.Models.Dto.Products;
@@ -8,12 +9,15 @@ namespace MyStore_backend.Repository.Products
     public class ProductRepository : IProductRepository
     {
         private readonly MyStoreProductsDBContext _myStoreProductsDBContext;
+        private readonly IMapper _mapper;
 
         public ProductRepository(
-        MyStoreProductsDBContext myStoreProductsDBContext
+        MyStoreProductsDBContext myStoreProductsDBContext,
+        IMapper mapper
         )
         {
             _myStoreProductsDBContext = myStoreProductsDBContext;
+            _mapper = mapper;
         }
 
 
@@ -22,31 +26,16 @@ namespace MyStore_backend.Repository.Products
         {
             var products = await _myStoreProductsDBContext.Products.ToListAsync();
 
-            var productsResponse = products.Select(product => new ProductResponseDto()
-            {
-                Category = product.Category,
-                Description = product.Description,
-                Id = product.Id,
-                ImageUrl = product.ImageUrl,
-                Name = product.Name,
-                Price = product.Price,
-                Stock = product.Stock
-            }).ToList();
+            var productsResponse = products.Select(product => _mapper.Map<Product, ProductResponseDto>(product)).ToList();
 
             return productsResponse;
         }
 
         public async Task<Guid> CreateProduct(CreateProductRequestDto createProductRequestDto)
         {
-            var newProduct = new Product()
-            {
-                Category = createProductRequestDto.Category,
-                Description = createProductRequestDto.Description,
-                ImageUrl = createProductRequestDto.ImageUrl,
-                Name = createProductRequestDto.Name,
-                Price = createProductRequestDto.Price,
-                Stock = createProductRequestDto.Stock ?? 0
-            };
+
+
+            var newProduct = _mapper.Map<CreateProductRequestDto, Product>(createProductRequestDto);
 
             await _myStoreProductsDBContext.AddAsync(newProduct);
             await _myStoreProductsDBContext.SaveChangesAsync();
@@ -74,11 +63,7 @@ namespace MyStore_backend.Repository.Products
             {
 
 
-                product.Price = editProductRequestDto.Price;
-                product.Category = editProductRequestDto.Category;
-                product.Name = editProductRequestDto.Name;
-                product.ImageUrl = editProductRequestDto.ImageUrl;
-                product.Description = editProductRequestDto.Description;
+                _mapper.Map(editProductRequestDto, product);
 
                 await _myStoreProductsDBContext.SaveChangesAsync();
                 return true;
