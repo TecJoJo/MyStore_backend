@@ -30,59 +30,42 @@ namespace MyStore_backend.Repository.Cart
         {
             var cartItems =
                 await _myStoreProductsDBContext.CartItems
-                .Join(
-                _myStoreProductsDBContext.Products,
-                c => c.ProductId,
-                p => p.Id,
-                (cartItem, product) => new { cartItem, product })
-                .Where(newObject => newObject.cartItem.UserId == userId)
-                .Select(newObject => new CartItemDto()
+                .Include(c => c.Product)
+                .Where(cartItem => cartItem.UserId == userId)
+                .Select(cartItem => new CartItemDto()
                 {
-                    Id = newObject.cartItem.Id,
-                    ImageUrl = newObject.product.ImageUrl,
-                    Name = newObject.product.Name,
-                    Price = newObject.product.Price,
-                    Quantity = newObject.cartItem.Quantity,
-                }).ToListAsync();
+                    Id = cartItem.Id,
+                    ImageUrl = cartItem.Product.ImageUrl,
+                    Name = cartItem.Product.Name,
+                    Price = cartItem.Product.Price,
+                    ProductId = cartItem.ProductId,
+                    Quantity = cartItem.Quantity,
+                })
+                .ToListAsync();
 
             if (cartItems == null) return new List<CartItemDto>();
             return cartItems;
         }
 
-        public async Task<CartItemDto> ModifyCartItemQuantity(Guid userId, Guid productId, int quantity)
+        public async Task<CartItemDto> ModifyCartItemQuantity(Guid cartItemId, int quantity)
         {
-            var cartItemQueryable = _myStoreProductsDBContext.CartItems.Where(c => c.UserId == userId && c.ProductId == productId);
-
-            var cartItem = await cartItemQueryable.FirstOrDefaultAsync();
-
-            if (cartItem == null) throw new Exception("The carItem is not found");
-
+            var cartItem = await _myStoreProductsDBContext.CartItems.Include(c => c.Product).FirstOrDefaultAsync(c => c.Id == cartItemId);
+            if (cartItem == null) throw new Exception("Cart Item is not found");
             cartItem.Quantity = quantity;
+
             await _myStoreProductsDBContext.SaveChangesAsync();
+            var cartItemDto = new CartItemDto()
+            {
+                Id = cartItem.Id,
+                Quantity = cartItem.Quantity,
+                ImageUrl = cartItem.Product.ImageUrl,
+                Name = cartItem.Product.Name,
+                Price = cartItem.Product.Price,
+                ProductId = cartItem.ProductId
 
+            };
 
-
-            //prepare the response
-            var cartItemDto = await cartItemQueryable.Join(
-                _myStoreProductsDBContext.Products,
-                c => c.ProductId,
-                p => p.Id,
-                (c, p) => new CartItemDto()
-                {
-                    Id = c.Id,
-                    ImageUrl = p.ImageUrl,
-                    Name = p.Name,
-                    Price = p.Price,
-                    Quantity = c.Quantity
-                }).FirstOrDefaultAsync()!;
-
-            return cartItemDto!;
-
-
-
-
-
-
+            return cartItemDto;
         }
     }
 }

@@ -107,47 +107,35 @@ namespace MyStore_backend.Controllers
         }
 
         [HttpPut]
-        [Route("cartitem/{productId}")]
+        [Route("cartitem/{CartItemId}")]
         [Authorize]
-        public async Task<ActionResult> ModifyCarItemQuantity(Guid productId, int quantity)
+        public async Task<ActionResult> ModifyCarItemQuantity(Guid CartItemId, int quantity)
         {
-            var userId = GetCurrentUserGuid();
-            if (userId != null)
+            try
             {
-                try
+                var cartItemDto = await _cartRepository.ModifyCartItemQuantity(CartItemId, quantity);
+                var response = new ApiResponseDto<CartItemDto>()
                 {
-                    var cartItemDto = await _cartRepository.ModifyCartItemQuantity((Guid)userId, productId, quantity);
-                    var response = new ApiResponseDto<CartItemDto>()
-                    {
-                        Data = cartItemDto,
-                        Message = "Quantity is updated",
-                        Success = true
+                    Data = cartItemDto,
+                    Message = "Quantity is updated",
+                    Success = true
 
-                    };
-                    return Ok(response);
-                }
-                catch (Exception ex)
-                {
-                    var response = new ApiResponseDto()
-                    {
-                        Success = false,
-                        Message = "Failed to create cart item!",
-                        Errors = new List<string>() { ex.Message }
-
-
-                    };
-                    return BadRequest(response);
-                }
+                };
+                return Ok(response);
             }
-            else
+            catch (Exception ex)
             {
-                var result = new ApiResponseDto()
+                var response = new ApiResponseDto()
                 {
                     Success = false,
-                    Message = "Something is wrong, failed parsing the user's identity"
+                    Message = "Failed to create cart item!",
+                    Errors = new List<string>() { ex.Message }
+
+
                 };
-                return BadRequest(result);
+                return BadRequest(response);
             }
+
         }
 
         private Guid? GetCurrentUserGuid()
