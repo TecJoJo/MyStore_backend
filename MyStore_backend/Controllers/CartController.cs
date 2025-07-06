@@ -22,31 +22,42 @@ namespace MyStore_backend.Controllers
         [Authorize]
         public async Task<ActionResult> GetCartItems()
         {
-            var parsingResult = Guid.TryParse(HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out Guid userId);
-            try
+            var userId = GetCurrentUserGuid();
+            if (userId != null)
             {
-                var cartItems = await _cartRepository.GetCartItems(userId);
-                var result = new ApiResponseDto<List<CartItemDto>>()
+
+                try
                 {
-                    Data = cartItems,
-                    Message = "Cart items for user is found",
-                    Success = true
-                };
-                return Ok(result);
+                    var cartItems = await _cartRepository.GetCartItems((Guid)userId);
+                    var result = new ApiResponseDto<List<CartItemDto>>()
+                    {
+                        Data = cartItems,
+                        Message = "Cart items for user is found",
+                        Success = true
+                    };
+                    return Ok(result);
+                }
+                catch (Exception ex)
+                {
+                    var result = new ApiResponseDto<List<CartItemDto>>()
+                    {
+                        Success = false,
+                        Message = "Failed to get cart items",
+                        Errors = new List<string>() { ex.Message }
+                    };
+                    return BadRequest(result);
+                }
             }
-            catch (Exception ex)
+            else
             {
-                var result = new ApiResponseDto<List<CartItemDto>>()
+
+                var result = new ApiResponseDto()
                 {
                     Success = false,
-                    Message = "Failed to get cart items",
-                    Errors = new List<string>() { ex.Message }
+                    Message = "Something is wrong, failed parsing the user's identity"
                 };
                 return BadRequest(result);
             }
-
-
-            //if user is not logged in return empty list 
         }
 
         [HttpPost]
@@ -54,14 +65,13 @@ namespace MyStore_backend.Controllers
         [Authorize]
         public async Task<ActionResult> AddCartItem(AddCartItemDto addCartItemDto)
         {
-            var userId = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userId = GetCurrentUserGuid();
             if (userId != null)
             {
-                var userGuid = Guid.Parse(userId);
-                addCartItemDto.UserId = userGuid;
+
+                addCartItemDto.UserId = (Guid)userId;
                 try
                 {
-
                     var carItemId = await _cartRepository.AddCartItem(addCartItemDto);
                     var response = new ApiResponseDto<Guid>()
                     {
@@ -84,17 +94,68 @@ namespace MyStore_backend.Controllers
                     };
                     return BadRequest(response);
                 }
-
-
-
-
             }
             else
             {
-                return Forbid();
+                var result = new ApiResponseDto()
+                {
+                    Success = false,
+                    Message = "Something is wrong, failed parsing the user's identity"
+                };
+                return BadRequest(result);
             }
+        }
+
+        [HttpPut]
+        [Route("cartitem/{productId}")]
+        [Authorize]
+        public async Task<ActionResult> ModifyCarItemQuantity(Guid productId, int quantity)
+        {
+            var userId = GetCurrentUserGuid();
+            if (userId != null)
+            {
+                try
+                {
+                    var cartItemDto = await _cartRepository.ModifyCartItemQuantity((Guid)userId, productId, quantity);
+                    var response = new ApiResponseDto<CartItemDto>()
+                    {
+                        Data = cartItemDto,
+                        Message = "Quantity is updated",
+                        Success = true
+
+                    };
+                    return Ok(response);
+                }
+                catch (Exception ex)
+                {
+                    var response = new ApiResponseDto()
+                    {
+                        Success = false,
+                        Message = "Failed to create cart item!",
+                        Errors = new List<string>() { ex.Message }
 
 
+                    };
+                    return BadRequest(response);
+                }
+            }
+            else
+            {
+                var result = new ApiResponseDto()
+                {
+                    Success = false,
+                    Message = "Something is wrong, failed parsing the user's identity"
+                };
+                return BadRequest(result);
+            }
+        }
+
+        private Guid? GetCurrentUserGuid()
+        {
+            var userIdClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var parsingResult = Guid.TryParse(userIdClaim, out Guid userId);
+            return parsingResult ? userId : null;
         }
     }
 }
