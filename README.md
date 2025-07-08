@@ -1,8 +1,10 @@
-# MyStore Backend
+﻿# MyStore Backend
 
 A modern e-commerce REST API backend built with ASP.NET Core 8.0.
 
-## ?? Features
+Frontend repository: [MyStore](https://github.com/TecJoJo/MyStore)
+
+## 🚀 Features
 
 - **User Authentication** - JWT-based authentication and registration
 - **Product Management** - CRUD operations for products
@@ -11,7 +13,7 @@ A modern e-commerce REST API backend built with ASP.NET Core 8.0.
 - **Database** - SQLite databases with Entity Framework Core
 - **API Documentation** - Swagger/OpenAPI integration
 
-## ??? Technology Stack
+## 🛠️ Technology Stack
 
 - **ASP.NET Core 8.0** - Web API framework
 - **Entity Framework Core** - ORM with SQLite
@@ -20,19 +22,19 @@ A modern e-commerce REST API backend built with ASP.NET Core 8.0.
 - **AutoMapper** - Object mapping
 - **Swagger** - API documentation
 
-## ??? Project Structure
+## 🏗️ Project Structure
 
 ```
 MyStore_backend/
-??? Controllers/          # API controllers
-??? Models/              # Domain models and DTOs
-??? Repository/          # Data access layer
-??? Data/               # Database contexts
-??? Migrations/         # Database migrations
-??? Program.cs          # Application entry point
+├── Controllers/          # API controllers
+├── Models/              # Domain models and DTOs
+├── Repository/          # Data access layer
+├── Data/               # Database contexts
+├── Migrations/         # Database migrations
+└── Program.cs          # Application entry point
 ```
 
-## ?? Getting Started
+## 🚀 Getting Started
 
 1. **Prerequisites**
    - .NET 8.0 SDK
@@ -49,7 +51,7 @@ MyStore_backend/
    - API: `https://localhost:7xxx/api`
    - Swagger: `https://localhost:7xxx/swagger`
 
-## ?? API Endpoints
+## 📋 API Endpoints
 
 ### Authentication
 - `POST /api/Auth/register` - Register new user
@@ -66,7 +68,7 @@ MyStore_backend/
 - `POST /api/Cart/cartitem` - Add item to cart
 - `PUT /api/Cart/cartitem/{id}` - Update cart item quantity
 
-## ?? License
+## 📄 License
 
 ```
 Copyright 2025 Yao Lu
