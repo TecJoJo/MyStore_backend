@@ -47,10 +47,16 @@ namespace MyStore_backend.Repository.Cart
             return cartItems;
         }
 
-        public async Task<CartItemDto> ModifyCartItemQuantity(Guid cartItemId, int quantity)
+        public async Task<CartItemDto> ModifyCartItemQuantity(Guid cartItemId, int quantity, Guid userId)
         {
+
             var cartItem = await _myStoreProductsDBContext.CartItems.Include(c => c.Product).FirstOrDefaultAsync(c => c.Id == cartItemId);
-            if (cartItem == null) throw new Exception("Cart Item is not found");
+
+            if (cartItem == null) throw new KeyNotFoundException($"Cart item with ID '{cartItemId}' was not found");
+            if (cartItem.UserId != userId)
+            {
+                throw new UnauthorizedAccessException($"User with ID '{userId}' is not authorized to modify this cart item");
+            }
             cartItem.Quantity = quantity;
 
             await _myStoreProductsDBContext.SaveChangesAsync();
@@ -62,7 +68,6 @@ namespace MyStore_backend.Repository.Cart
                 Name = cartItem.Product.Name,
                 Price = cartItem.Product.Price,
                 ProductId = cartItem.ProductId
-
             };
 
             return cartItemDto;

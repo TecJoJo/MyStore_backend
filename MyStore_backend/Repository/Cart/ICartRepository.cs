@@ -6,6 +6,6 @@ namespace MyStore_backend.Repository.Cart
     {
         public Task<Guid> AddCartItem(AddCartItemDto addCartItemDto);
         public Task<List<CartItemDto>> GetCartItems(Guid userId);
-        public Task<CartItemDto> ModifyCartItemQuantity(Guid cartItemId, int quantity);
+        public Task<CartItemDto> ModifyCartItemQuantity(Guid cartItemId, int quantity, Guid userId);
     }
 }
