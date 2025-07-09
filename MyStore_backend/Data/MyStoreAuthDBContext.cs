@@ -24,7 +24,7 @@ namespace MyStore_backend.Data
 
             modelBuilder.Entity<IdentityRole>().HasData(roles);
             // Seeded user: dummyuser@example.com
-            // Password: Password123!
+            // Password: Password123
             var user1Id = "11111111-1111-1111-1111-111111111111";
             var user1 = new IdentityUser
             {
@@ -34,12 +34,12 @@ namespace MyStore_backend.Data
                 Email = "dummyuser@example.com",
                 NormalizedEmail = "DUMMYUSER@EXAMPLE.COM",
                 EmailConfirmed = true,
-                PasswordHash = "AQAAAAIAAYagAAAAEJv8QwQw1QwQw1QwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQw==",
-                SecurityStamp = Guid.NewGuid().ToString()
+                PasswordHash = "AQAAAAIAAYagAAAAEATgaZxTUv81ni8lplOD2jiE8kWRyIozZjIwhkuyKzm+mEiCyygMlrb1hFMs8q4jNg==",
+                SecurityStamp = "8612E928-B2A4-465E-B7E9-18A6CBE615BB"
             };
 
             // Seeded user: anotheruser@example.com
-            // Password: Test@12345!
+            // Password: Password123
             var user2Id = "22222222-2222-2222-2222-222222222222";
             var user2 = new IdentityUser
             {
@@ -49,8 +49,8 @@ namespace MyStore_backend.Data
                 Email = "anotheruser@example.com",
                 NormalizedEmail = "ANOTHERUSER@EXAMPLE.COM",
                 EmailConfirmed = true,
-                PasswordHash = "AQAAAAIAAYagAAAAEJQw1QwQw1QwQw1QwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQw==",
-                SecurityStamp = Guid.NewGuid().ToString()
+                PasswordHash = "AQAAAAIAAYagAAAAEPlJUY3LpMyD0NKWbaeWoMH6V9xnDrRAUyNCcVPhMD7Jy0VJPaiPIjy+4jr3VZK+KA==",
+                SecurityStamp = "B2D7A1F6-F90F-4B5D-85C9-A9B64C911A2F"
             };
 
             modelBuilder.Entity<IdentityUser>().HasData(user1, user2);
