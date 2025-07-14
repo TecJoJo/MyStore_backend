@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MyStore_backend.Data;
 using MyStore_backend.Models.Dto;
 using MyStore_backend.Models.Dto.Products;
@@ -9,7 +8,7 @@ namespace MyStore_backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+
     public class ProductsController : ControllerBase
     {
         protected readonly MyStoreProductsDBContext _myStoreProductsDBContext;

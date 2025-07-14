@@ -72,5 +72,22 @@ namespace MyStore_backend.Repository.Cart
 
             return cartItemDto;
         }
+
+        public async Task RemoveCartItem(Guid cartItemId, Guid userId)
+        {
+            var cartItem = _myStoreProductsDBContext.CartItems.FirstOrDefault(c => c.Id == cartItemId);
+
+            if (cartItem == null)
+            {
+                throw new KeyNotFoundException($"Cart item with ID '{cartItemId}' was not found");
+            }
+            if (cartItem.UserId != userId)
+            {
+                throw new UnauthorizedAccessException($"User with ID '{userId}' is not authorized to remove this cart item");
+            }
+
+            _myStoreProductsDBContext.CartItems.Remove(cartItem);
+            await _myStoreProductsDBContext.SaveChangesAsync();
+        }
     }
 }

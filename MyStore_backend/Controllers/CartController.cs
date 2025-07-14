@@ -20,8 +20,8 @@ namespace MyStore_backend.Controllers
         }
 
         [HttpGet]
-        [Route("cart")]
         [Authorize]
+
         public async Task<ActionResult> GetCartItems()
         {
             var userId = GetCurrentUserGuid();
@@ -125,9 +125,9 @@ namespace MyStore_backend.Controllers
         [HttpPut]
         [Route("cartitem/{CartItemId}")]
         [Authorize]
-        public async Task<ActionResult> ModifyCartItemQuantity(Guid CartItemId, int quantity)
+        public async Task<ActionResult> ModifyCartItemQuantity([FromRoute] Guid CartItemId, [FromBody] ModifyCartItemQuantityRequestDto modifyCartItemQuantityRequestDto)
         {
-            if (quantity <= 0)
+            if (modifyCartItemQuantityRequestDto.Quantity <= 0)
             {
                 return BadRequest(new ApiResponseDto
                 {
@@ -150,7 +150,7 @@ namespace MyStore_backend.Controllers
 
             try
             {
-                var cartItemDto = await _cartRepository.ModifyCartItemQuantity(CartItemId, quantity, (Guid)userId);
+                var cartItemDto = await _cartRepository.ModifyCartItemQuantity(CartItemId, modifyCartItemQuantityRequestDto.Quantity, (Guid)userId);
                 var response = new ApiResponseDto<CartItemDto>()
                 {
                     Data = cartItemDto,
@@ -206,6 +206,79 @@ namespace MyStore_backend.Controllers
             }
 
         }
+
+        [HttpDelete]
+        [Route("cartitem/{CartItemId}")]
+        [Authorize]
+        public async Task<ActionResult> DeleteCartItem(Guid CartItemId)
+        {
+            var userId = GetCurrentUserGuid();
+            if (userId == null)
+            {
+                var result = new ApiResponseDto()
+                {
+                    Success = false,
+                    Message = "Failed parsing the user's identity"
+                };
+                return BadRequest(result);
+            }
+            try
+            {
+                await _cartRepository.RemoveCartItem(CartItemId, (Guid)userId);
+                var response = new ApiResponseDto<Guid>()
+                {
+                    Data = CartItemId,
+                    Message = "CartItem deleted",
+                    Success = true
+                };
+                return Ok(response);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var result = new ApiResponseDto()
+                {
+                    Success = false,
+                    Message = "You are not authorized to delete this cart item",
+                    Errors = new List<string>() { ex.Message }
+                };
+                _logger.LogWarning(ex, "Unauthorized access attempt to delete cart item with ID {CartItemId} by user {UserId}", CartItemId, userId);
+                return Unauthorized(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                var result = new ApiResponseDto()
+                {
+                    Success = false,
+                    Message = "CartItem not found",
+                    Errors = new List<string>() { ex.Message }
+                };
+                _logger.LogWarning(ex, "Cart item with ID {CartItemId} not found", CartItemId);
+                return NotFound(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                var result = new ApiResponseDto()
+                {
+                    Success = false,
+                    Message = "Database operation failed",
+                    Errors = new List<string>() { ex.Message }
+                };
+                _logger.LogError(ex, "Database operation failed while deleting cart item with ID {CartItemId}", CartItemId);
+                return StatusCode(500, result);
+            }
+            catch (Exception ex)
+            {
+                var result = new ApiResponseDto()
+                {
+                    Success = false,
+                    Message = "An unexpected error occurred",
+                    Errors = new List<string>() { ex.Message }
+                };
+                _logger.LogError(ex, "An unexpected error occurred while deleting cart item with ID {CartItemId}", CartItemId);
+                return StatusCode(500, result);
+            }
+        }
+
 
         private Guid? GetCurrentUserGuid()
         {
