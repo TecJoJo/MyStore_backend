@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MyStore_backend.Data;
 using MyStore_backend.Models.Domain;
 using MyStore_backend.Models.Dto.Products;
+using MyStore_backend.Models.DTO.Products;
 
 namespace MyStore_backend.Repository.Products
 {
@@ -69,6 +70,77 @@ namespace MyStore_backend.Repository.Products
                 return true;
             }
             return false;
+        }
+
+        public async Task<List<DeleteProductResponseDto>> DeleteProducts(DeleteProductsDto deleteProductsDto)
+        {
+
+            List<DeleteProductResponseDto> deleteProductResponseDtos = new List<DeleteProductResponseDto>();
+
+            var productsToDelete = (await _myStoreProductsDBContext.Products.Where(p => deleteProductsDto.ProductIds.Contains(p.Id)).ToListAsync()).ToHashSet();
+
+            var productIdsToDelete = productsToDelete.Select(p => p.Id).ToHashSet();
+
+
+
+            foreach (var productIdFromDto in deleteProductsDto.ProductIds)
+            {
+                var response = new DeleteProductResponseDto()
+                {
+                    ProductId = productIdFromDto,
+                    IsDeleted = false
+                };
+
+                if (!productIdsToDelete.Contains(productIdFromDto))
+                {
+
+                    response.ErrorMessage = $"Product with ProductId {productIdFromDto} is not found";
+                }
+
+
+                deleteProductResponseDtos.Add(response);
+
+            }
+
+
+
+            foreach (var productToDelete in productsToDelete)
+            {
+                try
+                {
+                    using var transaction = await _myStoreProductsDBContext.Database.BeginTransactionAsync();
+
+                    _myStoreProductsDBContext.Remove(productToDelete);
+                    await _myStoreProductsDBContext.SaveChangesAsync();
+                    await _myStoreProductsDBContext.Database.CommitTransactionAsync();
+
+                    foreach (var deleteProductResonseDto in deleteProductResponseDtos)
+                    {
+                        if (deleteProductResonseDto.ProductId == productToDelete.Id)
+                        {
+                            deleteProductResonseDto.IsDeleted = true;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    foreach (var deleteProductResonseDto in deleteProductResponseDtos)
+                    {
+                        if (deleteProductResonseDto.ProductId == productToDelete.Id)
+                        {
+                            deleteProductResonseDto.IsDeleted = false;
+                            deleteProductResonseDto.ErrorMessage = ex.Message;
+                        }
+                    }
+                }
+            }
+
+
+
+
+
+
+            return deleteProductResponseDtos;
         }
     }
 }
