@@ -83,11 +83,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
 });
 
+var frontendOrigin = builder.Configuration["ApiSettings:AllowedFrontend"] ?? "http://localhost:5173";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowMyStoreFrontend",
         policy => policy
-            .WithOrigins("http://localhost:5173")
+            .WithOrigins(frontendOrigin)
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
@@ -101,7 +102,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseCors("AllowMyStoreFrontend");
 
 app.UseAuthentication();

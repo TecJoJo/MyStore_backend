@@ -2,6 +2,7 @@
 using MyStore_backend.Data;
 using MyStore_backend.Models.Dto;
 using MyStore_backend.Models.Dto.Products;
+using MyStore_backend.Models.DTO.Products;
 using MyStore_backend.Repository.Products;
 
 namespace MyStore_backend.Controllers
@@ -111,6 +112,55 @@ namespace MyStore_backend.Controllers
             }
         }
 
+        [HttpDelete]
+        public async Task<ActionResult> DeleteProducts([FromBody] DeleteProductsDto deleteProductsDto)
+        {
+            try
+            {
+                var deleteProductResponseDtos = await _productRepository.DeleteProducts(deleteProductsDto);
+
+                // Check if any deletions failed
+                var failedDeletions = deleteProductResponseDtos.Where(r => r.IsDeleted == false).ToList();
+                var successfulDeletions = deleteProductResponseDtos.Where(r => r.IsDeleted == true).ToList();
+
+                if (failedDeletions.Any())
+                {
+                    // Partial success - some failed, some succeeded
+                    var partialSuccessResponse = new ApiResponseDto<List<DeleteProductResponseDto>>()
+                    {
+                        Data = deleteProductResponseDtos,
+                        Success = false, // Overall operation considered failed due to partial failures
+                        Message = $"Partial success: {successfulDeletions.Count} product(s) deleted successfully, {failedDeletions.Count} product(s) failed. See data for details.",
+                        Errors = failedDeletions.Select(f => f.ErrorMessage ?? "Unknown error").ToList()
+                    };
+
+                    // Return 207 Multi-Status for partial success (or 200 OK with Success=false)
+                    return StatusCode(207, partialSuccessResponse);
+                }
+                else
+                {
+                    // Complete success - all deletions succeeded
+                    var successResponse = new ApiResponseDto<List<DeleteProductResponseDto>>()
+                    {
+                        Data = deleteProductResponseDtos,
+                        Success = true,
+                        Message = $"All {successfulDeletions.Count} product(s) deleted successfully"
+                    };
+
+                    return Ok(successResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new ApiResponseDto<List<DeleteProductResponseDto>>
+                {
+                    Success = false,
+                    Message = "Unexpected error occurred during bulk delete operation",
+                    Errors = new List<string> { ex.Message }
+                };
+                return StatusCode(500, errorResponse);
+            }
+        }
         [HttpPut("{productId}")]
         public async Task<ActionResult> UpdateProduct([FromRoute] Guid productId, [FromBody] EditProductRequestDto editProductRequestDto)
         {
