@@ -58,9 +58,9 @@ builder.Services.AddAutoMapper(cfg =>
 });
 builder.Services.AddIdentityCore<IdentityUser>()
     .AddRoles<IdentityRole>()
-    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("MyStore")
-    .AddEntityFrameworkStores<MyStoreAuthDBContext>()
-    .AddDefaultTokenProviders();
+    .AddEntityFrameworkStores<MyStoreAuthDBContext>();
+//.AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("MyStore")
+//.AddDefaultTokenProviders();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {

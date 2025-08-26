@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MyStore_backend.Extensions;
 using MyStore_backend.Models.Dto;
 using MyStore_backend.Models.Dto.Cart;
 using MyStore_backend.Repository.Cart;
@@ -24,17 +25,7 @@ namespace MyStore_backend.Controllers
 
         public async Task<ActionResult> GetCartItems()
         {
-            var userId = GetCurrentUserGuid();
-            if (userId == null)
-            {
-                var result = new ApiResponseDto()
-                {
-                    Success = false,
-                    Message = "Failed parsing the user's identity"
-                };
-                return BadRequest(result);
-            }
-
+            var userId = this.GetCurrentUserId();
             try
             {
                 var cartItems = await _cartRepository.GetCartItems((Guid)userId);
@@ -75,16 +66,7 @@ namespace MyStore_backend.Controllers
         [Authorize]
         public async Task<ActionResult> AddCartItem(AddCartItemDto addCartItemDto)
         {
-            var userId = GetCurrentUserGuid();
-            if (userId == null)
-            {
-                var result = new ApiResponseDto()
-                {
-                    Success = false,
-                    Message = "Failed parsing the user's identity"
-                };
-                return BadRequest(result);
-            }
+            var userId = this.GetCurrentUserId();
 
             addCartItemDto.UserId = (Guid)userId;
             try
@@ -136,17 +118,7 @@ namespace MyStore_backend.Controllers
                 });
             }
 
-            var userId = GetCurrentUserGuid();
-            if (userId == null)
-            {
-                var result = new ApiResponseDto()
-                {
-                    Success = false,
-                    Message = "Failed parsing the user's identity"
-                };
-                return BadRequest(result);
-            }
-
+            var userId = this.GetCurrentUserId();
 
             try
             {
@@ -212,16 +184,8 @@ namespace MyStore_backend.Controllers
         [Authorize]
         public async Task<ActionResult> DeleteCartItem(Guid CartItemId)
         {
-            var userId = GetCurrentUserGuid();
-            if (userId == null)
-            {
-                var result = new ApiResponseDto()
-                {
-                    Success = false,
-                    Message = "Failed parsing the user's identity"
-                };
-                return BadRequest(result);
-            }
+            var userId = this.GetCurrentUserId();
+
             try
             {
                 await _cartRepository.RemoveCartItem(CartItemId, (Guid)userId);
@@ -277,15 +241,6 @@ namespace MyStore_backend.Controllers
                 _logger.LogError(ex, "An unexpected error occurred while deleting cart item with ID {CartItemId}", CartItemId);
                 return StatusCode(500, result);
             }
-        }
-
-
-        private Guid? GetCurrentUserGuid()
-        {
-            var userIdClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-            var parsedResult = Guid.TryParse(userIdClaim, out Guid userId);
-            return parsedResult ? userId : null;
         }
     }
 }
