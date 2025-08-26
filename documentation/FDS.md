@@ -11,14 +11,22 @@ Those users can be sorted and grouped based on the role
 The user can be searched 
 
 
-## Role management
+# Role management
 
 As a user with permission to visit the role management site,
 I am able to read, create, remove and update roles
 I can see a list of existing roles
 I can remove the role from the list 
 I can create new role 
-I can modify the permissions to the role
+I can modify the permissions to the role via a "Configure Permissions" modal
+
+# Configure Permissions modal
+Permisson modle shows a list of all permissions as checkbox with the permissions associated to the role ticked 
+
+## Tehcknical Overview
+endpoint "modifyRolePermissions" accets a list of permissions which will override the existing permissions of the role
+No add /remove permission endpoint is needed
+
 
 
 ## Add permissions directly to user (Optional)
